@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.DatagramPacket;
+import java.io.OutputStream;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.Socket;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -21,45 +21,37 @@ import javax.sound.sampled.TargetDataLine;
 
 
 public class Recoud_m {
-		//定义录音格式
+		//瀹氫箟褰曢煶鏍煎紡
 		AudioFormat af = null;
-		//定义目标数据行,可以从中读取音频数据,该 TargetDataLine 接口提供从目标数据行的缓冲区读取所捕获数据的方法。
+		//瀹氫箟鐩爣鏁版嵁琛�鍙互浠庝腑璇诲彇闊抽鏁版嵁,璇�TargetDataLine 鎺ュ彛鎻愪緵浠庣洰鏍囨暟鎹鐨勭紦鍐插尯璇诲彇鎵�崟鑾锋暟鎹殑鏂规硶銆�
 		TargetDataLine td = null;
-		//定义源数据行,源数据行是可以写入数据的数据行。它充当其混频器的源。应用程序将音频字节写入源数据行，这样可处理字节缓冲并将它们传递给混频器。
+		//瀹氫箟婧愭暟鎹,婧愭暟鎹鏄彲浠ュ啓鍏ユ暟鎹殑鏁版嵁琛屻�瀹冨厖褰撳叾娣烽鍣ㄧ殑婧愩�搴旂敤绋嬪簭灏嗛煶棰戝瓧鑺傚啓鍏ユ簮鏁版嵁琛岋紝杩欐牱鍙鐞嗗瓧鑺傜紦鍐插苟灏嗗畠浠紶閫掔粰娣烽鍣ㄣ�
 		SourceDataLine sd = null;
-		//定义字节数组输入输出流
+		//瀹氫箟瀛楄妭鏁扮粍杈撳叆杈撳嚭娴�
 		ByteArrayInputStream bais = null;
 		ByteArrayOutputStream baos = null;
-		//定义音频输入流
+		//瀹氫箟闊抽杈撳叆娴�
 		AudioInputStream ais = null;
-		//定义停止录音的标志，来控制录音线程的运行
+		//瀹氫箟鍋滄褰曢煶鐨勬爣蹇楋紝鏉ユ帶鍒跺綍闊崇嚎绋嬬殑杩愯
 		Boolean stopflag = false;
 		
 		public static void main(String [] args) throws Exception
 		{
 			Recoud_m r = new Recoud_m();
 			r.capture();
-			//Thread.sleep(5000);
-			//r.save();
-			//System.out.println("baocun");
 		}
 		
 		
 		
-		//开始录音
+		//寮�褰曢煶
 		public void capture()
 		{
 			try {
-				//af为AudioFormat也就是音频格式
 				af = getAudioFormat();
 				DataLine.Info info = new DataLine.Info(TargetDataLine.class,af);
 				td = (TargetDataLine)(AudioSystem.getLine(info));
-				//打开具有指定格式的行，这样可使行获得所有所需的系统资源并变得可操作。
 				td.open(af);
-				//允许某一数据行执行数据 I/O
 				td.start();
-				
-				//创建播放录音的线程
 				Record record = new Record();
 				Thread t1 = new Thread(record);
 				t1.start();
@@ -69,17 +61,17 @@ public class Recoud_m {
 				return;
 			}
 		}
-		//停止录音
+		//鍋滄褰曢煶
 		public void stop()
 		{
 			stopflag = true;			
 		}
-		//播放录音
+		//鎾斁褰曢煶
 		public void play()
 		{
-			//将baos中的数据转换为字节数据
+			//灏哹aos涓殑鏁版嵁杞崲涓哄瓧鑺傛暟鎹�
 			byte audioData[] = baos.toByteArray();
-			//转换为输入流
+			//杞崲涓鸿緭鍏ユ祦
 			bais = new ByteArrayInputStream(audioData);
 			af = getAudioFormat();
 			ais = new AudioInputStream(bais, af, audioData.length/af.getFrameSize());
@@ -89,7 +81,7 @@ public class Recoud_m {
 	            sd = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
 	            sd.open(af);
 	            sd.start();
-	            //创建播放进程
+	            //鍒涘缓鎾斁杩涚▼
 	            Play py = new Play();
 	            Thread t2 = new Thread(py);
 	            t2.start();           
@@ -97,7 +89,7 @@ public class Recoud_m {
 				e.printStackTrace();
 			}finally{
 				try {
-					//关闭流
+					//鍏抽棴娴�
 					if(ais != null)
 					{
 						ais.close();
@@ -117,24 +109,24 @@ public class Recoud_m {
 			}
 			
 		}
-		//保存录音
+		//淇濆瓨褰曢煶
 		public void save()
 		{
-			 //取得录音输入流
+			 //鍙栧緱褰曢煶杈撳叆娴�
 	        af = getAudioFormat();
 
 	        byte audioData[] = baos.toByteArray();
 	        bais = new ByteArrayInputStream(audioData);
 	        ais = new AudioInputStream(bais,af, audioData.length / af.getFrameSize());
-	        //定义最终保存的文件名
+	        //瀹氫箟鏈�粓淇濆瓨鐨勬枃浠跺悕
 	        File file = null;
-	        //写入文件
+	        //鍐欏叆鏂囦欢
 	        try {	
-	        	//以当前的时间命名录音的名字
-	        	//将录音的文件存放到F盘下语音文件夹下
-	        	File filePath = new File("e:/语音文件");
+	        	//浠ュ綋鍓嶇殑鏃堕棿鍛藉悕褰曢煶鐨勫悕瀛�
+	        	//灏嗗綍闊崇殑鏂囦欢瀛樻斁鍒癋鐩樹笅璇煶鏂囦欢澶逛笅
+	        	File filePath = new File("e:/Mu");
 	        	if(!filePath.exists())
-	        	{//如果文件不存在，则创建该目录
+	        	{//濡傛灉鏂囦欢涓嶅瓨鍦紝鍒欏垱寤鸿鐩綍
 	        		filePath.mkdir();
 	        	}
 	        	file = new File(filePath.getPath()+"/"+System.currentTimeMillis()+".mp3");      
@@ -142,7 +134,7 @@ public class Recoud_m {
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }finally{
-	        	//关闭流
+	        	//鍏抽棴娴�
 	        	try {
 	        		
 	        		if(bais != null)
@@ -158,10 +150,10 @@ public class Recoud_m {
 				}   	
 	        }
 		}
-		//设置AudioFormat的参数
+		//璁剧疆AudioFormat鐨勫弬鏁�
 		public AudioFormat getAudioFormat() 
 		{
-			//下面注释部分是另外一种音频格式，两者都可以
+			//涓嬮潰娉ㄩ噴閮ㄥ垎鏄彟澶栦竴绉嶉煶棰戞牸寮忥紝涓よ�閮藉彲浠�
 			AudioFormat.Encoding encoding = AudioFormat.Encoding.
 	        PCM_SIGNED ;
 			float rate = 8000f;
@@ -171,58 +163,51 @@ public class Recoud_m {
 			int channels = 1;
 			return new AudioFormat(encoding, rate, sampleSize, channels,
 					(sampleSize / 8) * channels, rate, bigEndian);
-//			//采样率是每秒播放和录制的样本数
+//			//閲囨牱鐜囨槸姣忕鎾斁鍜屽綍鍒剁殑鏍锋湰鏁�
 //			float sampleRate = 16000.0F;
-//			// 采样率8000,11025,16000,22050,44100
-//			//sampleSizeInBits表示每个具有此格式的声音样本中的位数
+//			// 閲囨牱鐜�000,11025,16000,22050,44100
+//			//sampleSizeInBits琛ㄧず姣忎釜鍏锋湁姝ゆ牸寮忕殑澹伴煶鏍锋湰涓殑浣嶆暟
 //			int sampleSizeInBits = 16;
 //			// 8,16
 //			int channels = 1;
-//			// 单声道为1，立体声为2
+//			// 鍗曞０閬撲负1锛岀珛浣撳０涓�
 //			boolean signed = true;
 //			// true,false
 //			boolean bigEndian = true;
 //			// true,false
 //			return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed,bigEndian);
 		}
-		//录音类，因为要用到MyRecord类中的变量，所以将其做成内部类
+		//褰曢煶绫伙紝鍥犱负瑕佺敤鍒癕yRecord绫讳腑鐨勫彉閲忥紝鎵�互灏嗗叾鍋氭垚鍐呴儴绫�
 		class Record implements Runnable 
 		{
-			//定义存放录音的字节数组,作为缓冲区
-			byte [] bts= new byte[1024*10];
-			//将字节数组包装到流里，最终存入到baos中
+			//瀹氫箟瀛樻斁褰曢煶鐨勫瓧鑺傛暟缁�浣滀负缂撳啿鍖�
+			byte [] bts= new byte[1024*100*2/3];
+			
+			//灏嗗瓧鑺傛暟缁勫寘瑁呭埌娴侀噷锛屾渶缁堝瓨鍏ュ埌baos涓�
 	
 			DatagramSocket client = null;
 
 			int count=0;
 			
-			//重写run函数
+			//閲嶅啓run鍑芥暟
 			public void run() {	
-				baos = new ByteArrayOutputStream();		
+				baos = new ByteArrayOutputStream();	
 				try {
-					client = new DatagramSocket();
 					System.out.println("start recoud");
-					stopflag = false;
-					while(stopflag != true)
-					{
-						//当停止录音没按下时，该线程一直执行	
-						//从数据行的输入缓冲区读取音频数据。
-						//要读取bts.length长度的字节,cnt 是实际读取的字节数
-						int count = td.read(bts, 0, bts.length);
-						if(count > 0)
-						{
-							baos.write(bts, 0, count);
-							
-						}
-						DatagramPacket dp = new DatagramPacket(bts,bts.length,InetAddress.getByName("192.168.8.100"),8999);
-						client.send(dp);
-					}
-					client.close();
+					
+				int	count = td.read(bts, 0, bts.length);
+					System.out.println(count);
+				
+					Socket s = new Socket("127.0.0.1",11111);
+					OutputStream os =s.getOutputStream();
+					os.write(bts,0,bts.length);
+					s.close();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}finally{
 					try {
-						//关闭打开的字节数组流
+						//鍏抽棴鎵撳紑鐨勫瓧鑺傛暟缁勬祦
 						if(baos != null)
 						{
 							baos.close();
@@ -237,21 +222,21 @@ public class Recoud_m {
 			}
 			
 		}
-		//播放类,同样也做成内部类
+		//鎾斁绫�鍚屾牱涔熷仛鎴愬唴閮ㄧ被
 		class Play implements Runnable
 		{
-			//播放baos中的数据即可
+			//鎾斁baos涓殑鏁版嵁鍗冲彲
 			public void run() {
-				byte bts[] = new byte[10000];
+				byte bts[] = new byte[100000];
 				try {
 					int cnt;
-		            //读取数据到缓存数据
+		            //璇诲彇鏁版嵁鍒扮紦瀛樻暟鎹�
 		            while ((cnt = ais.read(bts, 0, bts.length)) != -1) 
 		            {
 		                if (cnt > 0) 
 		                {
-		                    //写入缓存数据
-		                    //将音频数据写入到混频器
+		                    //鍐欏叆缂撳瓨鏁版嵁
+		                    //灏嗛煶棰戞暟鎹啓鍏ュ埌娣烽鍣�
 		                    sd.write(bts, 0, cnt);
 		                }
 		            }

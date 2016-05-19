@@ -2,8 +2,9 @@ package Recoud;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -11,9 +12,10 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
-import Recoud.Recoud_m.Play;
+import sp.voice.MscTest;
+import sp.voice.ok;
 
-public class Server {
+public class Server2 {
 	ByteArrayInputStream bais = null;
 	AudioFormat af = null;
 	AudioInputStream ais = null;
@@ -62,28 +64,37 @@ public class Server {
 	}
 	public static void main(String [] args) throws Exception
 	{
-		Server s = new Server();
-		  DatagramSocket ds= new DatagramSocket(8999);//设置了监听端口
-		  byte [] buf = new byte[1024*100];
+		
+		  Server2 s = new Server2();
+		  ServerSocket server = new ServerSocket(11114);
 		  
+		  byte []  b ;
 		  while(true)
 		  {
-			  DatagramPacket dp = new DatagramPacket(buf,buf.length);
-			  System.out.println("正在监听");
-			  ds.receive(dp);
-			 
-			  String ip =dp.getAddress().getHostAddress();
-			  //String data = new String(dp.getData(),0,dp.getLength());
-			  //int port = dp.getPort();
-			  //s.play(dp.getData());
-			  //System.out.println(ip+"--"+data+"--"+port);
+			  b = new byte[102400*2];
+			  System.out.println("监听中");
+			  Socket socket = server.accept();
+			  System.out.println("收到请求");
+			  InputStream in = socket.getInputStream();
+			  in.read(b,0,b.length);
+			  
+			 ok ok1 = new ok();
+			  ok1.ok(b);
+			
+//			  s.play(b);
 		  }
+		 
+		  
+		  
 	}
+	
+	
+	
 	class Play implements Runnable
 	{
 		//鎾斁baos涓殑鏁版嵁鍗冲彲
 		public void run() {
-			byte bts[] = new byte[10000];
+			byte bts[] = new byte[102400*2/3];
 			try {
 				int cnt;
 	            //璇诲彇鏁版嵁鍒扮紦瀛樻暟鎹�

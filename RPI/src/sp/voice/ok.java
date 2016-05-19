@@ -36,11 +36,12 @@ public class ok {
 
 	public static void ok(byte[] args) {
 		//在应用发布版本中，请勿显示日志，详情见此函数说明。
-		Setting.setShowLog( true );
+		//Setting.setShowLog( true );
 		
 		SpeechUtility.createUtility("appid=" + APPID);
 		byte[] data = args;
 		getMscObj().onLoop(data);
+		System.out.println(data.toString());
 	}
 
 	private static ok getMscObj() {
@@ -50,34 +51,7 @@ public class ok {
 	}
 
 	private void onLoop(byte[] data) {
-		try {
-			DebugLog.Log("*********************************");
-			DebugLog.Log("Please input the command");
-			DebugLog.Log("1:音频流听写          3：无声合成           4：退出  ");
-
-			Scanner in = new Scanner(System.in);
-			int command = in.nextInt();
-
-			DebugLog.Log("You input " + command);
-
-			switch (command) {
-			case 1:
 				Recognize(data);
-				break;
-			case 3:
-				Synthesize();
-				break;
-			case 4:
-				System.exit(0);
-				break;
-			default:
-				//onLoop();
-				break;
-			}
-		} catch (Exception e) {
-			//onLoop();
-			System.out.println("error");
-		}
 	}
 
 	// *************************************音频流听写*************************************
@@ -99,16 +73,9 @@ public class ok {
 	public void RecognizePcmfileByte(byte[] data) {
 		// 1、读取音频文件
 		//FileInputStream fis = null;
-		byte[] voiceBuffer = null;
-		try {
-			//在这里读取音频文件或者字节数组，读取旭哥给我发过来的字节流
-			//fis = new FileInputStream(new File("testVoice/tts_test.pcm"));
+		byte[] voiceBuffer = new byte[102400*2];
 			voiceBuffer = data;
-		//	fis.read(voiceBuffer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
+			
 		// 2、音频流听写
 		if (0 == voiceBuffer.length) {
 			mResult.append("no audio avaible!");
@@ -117,6 +84,7 @@ public class ok {
 			recognizer.setParameter(SpeechConstant.DOMAIN, "iat");
 			recognizer.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
 			recognizer.setParameter(SpeechConstant.AUDIO_SOURCE, "-1");
+			recognizer.setParameter(SpeechConstant.SAMPLE_RATE, "8000");
 			//写音频流时，文件是应用层已有的，不必再保存
 //			recognizer.setParameter(SpeechConstant.ASR_AUDIO_PATH,
 //					"./iflytek.pcm");
