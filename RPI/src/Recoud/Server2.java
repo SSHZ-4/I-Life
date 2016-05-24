@@ -1,12 +1,13 @@
 package Recoud;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -18,7 +19,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import sp.voice.DataTest;
-import sp.voice.ok;
 
 public class Server2 {
 	static ByteArrayInputStream bais = null;
@@ -69,30 +69,51 @@ public class Server2 {
 	}
 	public static void main(String [] args) throws Exception
 	{
-		
 		  Server2 s = new Server2();
-		  ServerSocket server = new ServerSocket(11121);
-		  
+		  ServerSocket server = new ServerSocket(11125);
 		  byte []  b ;
 		  while(true)
 		  {
-			  
-			  b = new byte[1024*100*2/3];
+			  b = new byte[1000];
 			  System.out.println("监听中");
 			  Socket socket = server.accept();
 			  System.out.println("收到请求");
 			  InputStream in = socket.getInputStream();
-			  in.read(b,0,b.length);
+			  FileOutputStream f =new FileOutputStream("D://123.wav");
+			 while(in.read(b)!=-1)
+			 {
+				 f.write(b);
+			 }
+			  f.close();
+			  synchronized(new Object()) {
+				  DataTest.read("D://123.wav");
+			}
 			  
-			  String filePathString = save(b);
-			  System.out.println(filePathString);
-			  DataTest.read(filePathString);
+			  System.out.println(b.length+"读的大小");
+			  //
+			  //String filePathString = save(b);
+			 // System.out.println(filePathString);
+			 
 			/*  ok ok1 = new ok();
 			  ok1.ok(b);
 			*/
 			 // s.play(b);
+			  System.out.println("准备发送数据");
+			  File file = new File("D:/sunpeng.pcm");
+			  byte [] buf =new byte[1000];
+			  int len=0;
 			  
-			  System.out.println(b.length+"读的大小");
+			  OutputStream outputStream = socket.getOutputStream();
+			  
+			FileInputStream fis = new FileInputStream(file);
+			  while((len=fis.read(buf))!=-1)
+		        {
+		           outputStream.write(buf);
+		        }
+			  Thread.sleep(5000);
+			  socket.shutdownOutput();		 
+			  socket.close();
+			
 		  }
 	}
 	
@@ -125,7 +146,7 @@ public class Server2 {
 	        try {	
 	        	//以当前的时间命名录音的名字
 	        	//将录音的文件存放到F盘下语音文件夹下
-	        	File filePath = new File("F:/语音文件");
+	        	File filePath = new File("c:/语音文件");
 	        	if(!filePath.exists())
 	        	{//如果文件不存在，则创建该目录
 	        		filePath.mkdir();
@@ -163,8 +184,8 @@ public class Server2 {
 			AudioFormat.Encoding encoding = AudioFormat.Encoding.
 	        PCM_SIGNED ;
 			float rate = 8000f;
-			int sampleSize = 16;
-			String signedString = "signed";
+			int sampleSize = 8;
+			String signedString = "unsigned";
 			boolean bigEndian = true;
 			int channels = 1;
 			return new AudioFormat(encoding, rate, sampleSize, channels,

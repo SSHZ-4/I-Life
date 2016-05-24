@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.DatagramSocket;
 import java.net.Socket;
@@ -67,10 +68,10 @@ public class Recoud_m {
 			stopflag = true;			
 		}
 		//鎾斁褰曢煶
-		public void play()
+		public void play(byte [] audioData)
 		{
 			//灏哹aos涓殑鏁版嵁杞崲涓哄瓧鑺傛暟鎹�
-			byte audioData[] = baos.toByteArray();
+			//byte audioData[] = baos.toByteArray();
 			//杞崲涓鸿緭鍏ユ祦
 			bais = new ByteArrayInputStream(audioData);
 			af = getAudioFormat();
@@ -157,7 +158,7 @@ public class Recoud_m {
 			AudioFormat.Encoding encoding = AudioFormat.Encoding.
 	        PCM_SIGNED ;
 			float rate = 8000f;
-			int sampleSize = 16;
+			int sampleSize = 8;
 			String signedString = "signed";
 			boolean bigEndian = true;
 			int channels = 1;
@@ -200,7 +201,10 @@ public class Recoud_m {
 					Socket s = new Socket("127.0.0.1",11111);
 					OutputStream os =s.getOutputStream();
 					os.write(bts,0,bts.length);
-					s.close();
+					InputStream in = s.getInputStream();
+					byte [] buffer = new byte[1024*10*2/3];
+					count = in.read(buffer);
+					new Recoud_m().play(buffer);
 					
 				} catch (Exception e) {
 					e.printStackTrace();

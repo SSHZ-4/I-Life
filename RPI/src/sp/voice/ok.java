@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.apache.commons.lang.ObjectUtils.Null;
+
+import sp.voice.utils.ChangeToUtils;
+import sp.voice.utils.SaveToFile;
+
 import com.iflytek.cloud.speech.DataUploader;
 import com.iflytek.cloud.speech.LexiconListener;
 import com.iflytek.cloud.speech.RecognizerListener;
@@ -85,9 +89,7 @@ public class ok {
 			recognizer.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
 			recognizer.setParameter(SpeechConstant.AUDIO_SOURCE, "-1");
 			recognizer.setParameter(SpeechConstant.SAMPLE_RATE, "8000");
-			//写音频流时，文件是应用层已有的，不必再保存
-//			recognizer.setParameter(SpeechConstant.ASR_AUDIO_PATH,
-//					"./iflytek.pcm");
+			
 			recognizer.setParameter( SpeechConstant.RESULT_TYPE, "plain" );
 			recognizer.startListening(recListener);
 			ArrayList<byte[]> buffers = splitBuffer(voiceBuffer,
@@ -171,6 +173,9 @@ public class ok {
 			    accept  = SendData.sendData(mResult.toString());
 				System.out.println("这是小艾传回来的数据是：：：："+ accept);
 				mResult.delete(0, mResult.length());
+				//在这里将数据转成语音文件存储到本地磁盘，返回文件位置
+				SaveToFile  stf = new SaveToFile();
+				stf.onLoop(accept);
 				//onLoop();
 			}
 		}
