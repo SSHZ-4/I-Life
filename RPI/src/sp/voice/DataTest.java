@@ -7,14 +7,14 @@ import java.io.IOException;
 
 public class DataTest {
 
-	public static void main(String[] args) throws IOException {
+	
+	public static void read(String FileName) throws IOException {
 		// TODO Auto-generated method stub
-		 FileInputStream fis = new  FileInputStream(new File("testVoice/test.pcm"));
+		 FileInputStream fis = new  FileInputStream(new File("F:/语音文件/"+FileName));
 		 byte [] voiceBuffer = new byte[fis.available()];
 		 fis.read(voiceBuffer);
 		 ok ok1 = new ok();
 		 ok1.ok(voiceBuffer);
-	
 	}
 
 }

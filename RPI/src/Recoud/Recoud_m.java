@@ -194,8 +194,7 @@ public class Recoud_m {
 				baos = new ByteArrayOutputStream();	
 				try {
 					System.out.println("start recoud");
-					
-				int	count = td.read(bts, 0, bts.length);
+					int	count = td.read(bts, 0, bts.length);
 					System.out.println(count);
 				
 					Socket s = new Socket("127.0.0.1",11111);
