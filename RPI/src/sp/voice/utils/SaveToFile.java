@@ -60,6 +60,7 @@ public class SaveToFile {
 		speechSynthesizer.setParameter(SpeechConstant.VOLUME, "50");
 		// 设置合成音频保存位置（可自定义保存位置），默认保存在“./iflytek.pcm”
 		speechSynthesizer.synthesizeToUri(words, "D:/sunpeng.pcm",synthesizeToUriListener);
+		
 	
 	}
 
@@ -81,8 +82,6 @@ public class SaveToFile {
 			} else
 				DebugLog.Log("*************" + error.getErrorCode()
 						+ "*************");
-			//onLoop();
-
 		}
 
 	};

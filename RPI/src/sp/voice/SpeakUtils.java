@@ -11,6 +11,10 @@ import com.iflytek.cloud.speech.SynthesizerListener;
 
 class SpeakUtils{
 	
+	/*public static void main(String[] args) {
+		speak("哈哈");
+	}*/
+	
 	private static SpeechSynthesizer mTts;
 	
 

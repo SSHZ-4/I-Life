@@ -19,7 +19,7 @@ public class SendData {
 
 	}
 	
-	public static String sendData(String text) {
+	public static String sendData(String text) throws InterruptedException {
 		//如果要解析json结果，请考本项目示例的 com.iflytek.util.JsonParser类
 		
 		//调用解析方法生成串给旭哥
@@ -39,6 +39,7 @@ public class SendData {
 		 if ((ask.contains("发消息") || ask.contains("发语音")) && ask.contains("给")  ) {
 				//此时走自己的程序
 			 SendMessages.SendMessage(ask);
+			 			 
 	      }else{
 		String s=t.ask(ask);
 		System.out.println("这是返回来的的数据"+s);

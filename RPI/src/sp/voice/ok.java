@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.Spring;
+
 import org.apache.commons.lang.ObjectUtils.Null;
 
 import sp.voice.utils.ChangeToUtils;
@@ -170,12 +172,29 @@ public class ok {
 				DebugLog.Log("识别结果为:" + mResult.toString());
 				//在这里可以直接把文字mResult.toString() 传给小艾
 				//直接调用远程方法，将数据发送过去，并接受小艾传过来的数据
-			    accept  = SendData.sendData(mResult.toString());
+			    try {
+					accept  = SendData.sendData(mResult.toString());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				System.out.println("这是小艾传回来的数据是：：：："+ accept);
 				mResult.delete(0, mResult.length());
+				
+				
+			/*	try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				SpeakUtils.speak("消息已发送");*/
+				
+				
 				//在这里将数据转成语音文件存储到本地磁盘，返回文件位置
-				SaveToFile  stf = new SaveToFile();
-				stf.onLoop(accept);
+				/*SaveToFile  stf = new SaveToFile();
+				stf.onLoop(accept);*/
 				//onLoop();
 			}
 		}

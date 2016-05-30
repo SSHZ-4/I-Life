@@ -19,6 +19,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 import sp.voice.DataTest;
+import test.Media;
+import zx.rpc.support.RPC;
 
 public class Server2 {
 	static ByteArrayInputStream bais = null;
@@ -70,7 +72,7 @@ public class Server2 {
 	public static void main(String [] args) throws Exception
 	{
 		  Server2 s = new Server2();
-		  ServerSocket server = new ServerSocket(11125);
+		  ServerSocket server = new ServerSocket(11347);
 		  byte []  b ;
 		  while(true)
 		  {
@@ -85,19 +87,25 @@ public class Server2 {
 				 f.write(b);
 			 }
 			  f.close();
-			  synchronized(new Object()) {
+			  
+			  /*
+			  Media m = RPC.getProxy(Media.class, "169.254.178.141", 20382);
+				byte [] buffer = m.takePhotos();
+				FileOutputStream file = new FileOutputStream("f:\\zx.jpg");
+				
+				file.write(buffer);
+				file.flush();
+				file.close();
+				*/
+			//  synchronized(new Object()) {
 				  DataTest.read("D://123.wav");
-			}
+		//	}
 			  
 			  System.out.println(b.length+"读的大小");
-			  //
-			  //String filePathString = save(b);
-			 // System.out.println(filePathString);
-			 
-			/*  ok ok1 = new ok();
-			  ok1.ok(b);
-			*/
-			 // s.play(b);
+			  
+			  
+		/*	  //多线程问题，让其停10秒
+			  Thread.sleep(10000);
 			  System.out.println("准备发送数据");
 			  File file = new File("D:/sunpeng.pcm");
 			  byte [] buf =new byte[1000];
@@ -112,7 +120,7 @@ public class Server2 {
 		        }
 			  Thread.sleep(5000);
 			  socket.shutdownOutput();		 
-			  socket.close();
+			  socket.close();*/
 			
 		  }
 	}
